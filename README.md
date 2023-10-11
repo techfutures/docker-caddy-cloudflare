@@ -26,3 +26,47 @@ hostname.example.com {
   }
 }
 ```
+## Example json config file for cert management only
+```
+{
+  "apps": {
+    "tls": {
+      "certificates": {
+        "automate": [
+          "hostname.example.com"
+        ]
+      },
+      "automation": {
+        "policies": [ {
+            "issuers": [ {
+                "module": "acme",
+                "challenges": {
+                  "dns": {
+                    "provider": {
+                      "name": "cloudflare",
+                      "api_token": "APITOKENHERE"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
+```
+## Example docker compose
+```
+version: '3.7'
+services:
+  caddy:
+    container_name: caddy
+    restart: always
+    image: "ghcr.io/techfutures/docker-caddy-cloudflare:main"
+    volumes:
+      - /etc/caddy/config.json://etc/caddy/config.json
+      - /etc/caddy/.certs:/data
+    command: ["caddy", "run", "--config", "/etc/caddy/config.json"]
+```
